@@ -40,7 +40,7 @@ def main_loop(gpg, primary_selection, clipboard):
     if encrypted_messages:
         log.debug("Encrypted message found, decrypting")
         for message in encrypted_messages:
-            decrypted_message = gpg.decrypt(message).data.decode("utf-8")
+            decrypted_message = gpg.decrypt(message).data.decode("utf-8").strip()
             log.info("Decrypted message:\n{}".format(decrypted_message))
             # Setting decrypted message in primary selection
             primary_selection.set_text(decrypted_message)
