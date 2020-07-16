@@ -1,4 +1,4 @@
-from gpgclip.gpg_messages import get_pubkey
+from gpgclip.gpg_messages import get_pubkeys
 
 PUBKEY_ONLY = '''
 -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -17,6 +17,6 @@ XGo8Un24WP40IT78XjKO
 '''
 
 
-def test_get_pubkey():
-    pubkeys = get_pubkey(PUBKEY_ONLY)
+def test_get_pubkeys():
+    pubkeys = get_pubkeys(PUBKEY_ONLY)
     assert pubkeys[0] == PUBKEY_ONLY.strip()

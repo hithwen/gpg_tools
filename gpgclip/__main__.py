@@ -1,18 +1,19 @@
+import gnupg
 import pyperclip
 import logging
-import re
 
+from gpgclip import gpg_messages
 
-
-
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def main():
     clipboard_content = pyperclip.paste()
-    if PUBLIC_KEY_START in clipboard_content:
-        if PUBLIC_KEY_END not in clipboard_content:
-            logger.error("Incomplete GPG public key detected. Don't know how to proceed")
-            return
+    public_keys = gpg_messages.get_pubkeys(clipboard_content)
+    gpg = gnupg.GPG(use_agent=True)
+    for key in public_keys:
+        import_result = gpg.import_keys(key)
+        log.info("Imported public key: {}", import_result)
+    decrypted_data = gpg.decrypt(data)
 
 

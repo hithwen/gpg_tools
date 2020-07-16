@@ -19,7 +19,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'pyperclip'
+        'pyperclip',
+        'python-gnupg'
     ],
     python_requires='>=3.7',
     entry_points={"console_scripts": ["realpython=gpgclip.__main__:main"]},
