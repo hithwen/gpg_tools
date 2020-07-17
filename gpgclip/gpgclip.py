@@ -14,15 +14,15 @@ def import_public_keys(gpg, public_keys):
     return import_results
 
 
-def main_loop(gpg, primary_selection, clipboard):
-    primary_content = primary_selection.get_text()
+def main_loop(gpg, clipboard):
+    primary_content = clipboard.read_primary()
     public_keys = gpg_messages.get_pubkeys(primary_content)
 
     if public_keys:
         log.debug("Public_keys found, adding importing them")
         imported_keys = import_public_keys(gpg, public_keys)
         # encrypt clipboard to the key in the primary selection
-        clipboard_content = clipboard.paste()  # Reads clipboard
+        clipboard_content = clipboard.read_clipboard()
         if clipboard_content:
             log.debug("Content found in clipboard, encrypting it")
             if len(imported_keys) > 1:
@@ -31,7 +31,7 @@ def main_loop(gpg, primary_selection, clipboard):
             if not encrypted_message.ok:
                 log.error(encrypted_message.stderr)
             else:
-                primary_selection.set_text(encrypted_message.data.decode("utf-8"))  # Set encrypted message in primary selection
+                clipboard.write_primary(encrypted_message.data.decode("utf-8"))  # Set encrypted message in primary selection
                 log.debug("Encrypted message set in primary selection")
         else:
             log.debug("No clipboard content found, nothing to encrypt")
@@ -44,7 +44,7 @@ def main_loop(gpg, primary_selection, clipboard):
             decrypted_message = gpg.decrypt(message).data.decode("utf-8").strip()
             log.info("Decrypted message:\n{}".format(decrypted_message))
             # Setting decrypted message in primary selection
-            primary_selection.set_text(decrypted_message)
+            clipboard.write_primary(decrypted_message)
             # ToDo: make it appear in popup window? (maybe with tkinter)
         return
 
