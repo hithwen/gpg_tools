@@ -21,7 +21,6 @@ setuptools.setup(
     install_requires=[
         'pyperclip',
         'python-gnupg',
-        'klembord'
     ],
     python_requires='>=3.7',
     entry_points={"console_scripts": ["realpython=gpgclip.__main__:main"]},

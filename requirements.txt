@@ -1,3 +1,2 @@
 python-gnupg
 pyperclip
-klembord
