@@ -1,7 +1,7 @@
 import tempfile
 
-from gpgclip import gpgclip
-from .common import PUBKEY, SIGNED_MESSAGE, PRIVATE_KEY, ENCRYPTED_MESSAGE
+from gpgclip import gpgclip, gpg_messages
+from .common import PUBKEY, SIGNED_MESSAGE, PRIVATE_KEY, ENCRYPTED_MESSAGE, ATTACHED_SIGNED_MESSAGE
 import gnupg
 from mock import MagicMock
 
@@ -43,3 +43,13 @@ def test_decrypt_message_and_strip_it():
         decrypted_message = primary_selection.set_text.call_args_list[0].args[0]
     assert decrypted_message == 'Sample text'
 
+
+def test_verify_good_signature():
+    primary_selection = MagicMock()
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        gpg = gnupg.GPG(gnupghome=tmp_dir)
+        gpg.import_keys(PUBKEY)
+
+        primary_selection.get_text.return_value = ATTACHED_SIGNED_MESSAGE
+        verify = gpgclip.main_loop(gpg, primary_selection, None)
+    assert verify.valid

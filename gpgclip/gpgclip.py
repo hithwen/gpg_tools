@@ -1,4 +1,5 @@
 import logging
+
 from gpgclip import gpg_messages
 
 log = logging.getLogger(__name__)
@@ -52,6 +53,9 @@ def main_loop(gpg, primary_selection, clipboard):
         log.debug("Signed message found, verifying")
         for signed_text in signed_texts:
             verification = gpg.verify(signed_text)
-            log.info("Verification result: {}", verification)
+            if not verification.valid:
+                log.error("Could not verify signature, {}", verification.stderr)
+            else:
+                log.info("Valid signature from: {}", verification.username)
             # ToDo: make it appear in popup window?
         return verification
