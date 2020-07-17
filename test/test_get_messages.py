@@ -1,5 +1,5 @@
 from gpgclip.gpg_messages import get_pubkeys, get_encrypted_messages, get_signed_messages
-from .common import PUBKEY, ENCRYPTED_MESSAGE, SIGNED_MESSAGE, ATTACHED_SIGNED_MESSAGE
+from .common import PUBKEY, ENCRYPTED_MESSAGE, ATTACHED_SIGNED_MESSAGE
 
 
 def test_get_pubkeys():

@@ -1,5 +1,7 @@
 # gpg_tools
-commandline gpg utilities
+Small hackathon project.
+
+commandline gpg utilities to import keys, encrypt, decript and verify signatures from the clipboard
 
 Requirements
 -------------
