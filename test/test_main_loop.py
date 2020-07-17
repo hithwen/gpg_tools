@@ -2,8 +2,8 @@ import tempfile
 
 import gnupg
 
-from gpgclip import gpgclip
 from gpgclip.clip_wrapper import ClipWrapper
+from gpgclip.gpgclip import GPGClip
 from .common import PUBKEY, PRIVATE_KEY, ENCRYPTED_MESSAGE, ATTACHED_SIGNED_MESSAGE
 from mock import MagicMock
 
@@ -20,10 +20,11 @@ def test_add_key_and_encrypt_message():
     with tempfile.TemporaryDirectory() as tmp_dir:
         gpg = gnupg.GPG(gnupghome=tmp_dir)
         clipboard = MagicMock(ClipWrapper)
+        gpgclip = GPGClip(gpg, clipboard)
 
         clipboard.read_primary.return_value = PUBKEY
         clipboard.read_clipboard.return_value = SAMPLE_MESSAGE
-        gpgclip.main_loop(gpg, clipboard)
+        gpgclip.main_loop()
         encrypted_message = clipboard.write_primary.call_args_list[0].args[0]
 
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -35,12 +36,13 @@ def test_add_key_and_encrypt_message():
 
 def test_decrypt_message_and_strip_it():
     clipboard = MagicMock(ClipWrapper)
-
     with tempfile.TemporaryDirectory() as tmp_dir:
         gpg = gnupg.GPG(gnupghome=tmp_dir)
         gpg.import_keys(PRIVATE_KEY)
         clipboard.read_primary.return_value = ENCRYPTED_MESSAGE
-        gpgclip.main_loop(gpg, clipboard)
+
+        gpgclip = GPGClip(gpg, clipboard)
+        gpgclip.main_loop()
         decrypted_message = clipboard.write_primary.call_args_list[0].args[0]
     assert decrypted_message == 'Sample text'
 
@@ -50,7 +52,8 @@ def test_verify_good_signature():
     with tempfile.TemporaryDirectory() as tmp_dir:
         gpg = gnupg.GPG(gnupghome=tmp_dir)
         gpg.import_keys(PUBKEY)
-
         clipboard.read_primary.return_value = ATTACHED_SIGNED_MESSAGE
-        verify = gpgclip.main_loop(gpg, clipboard)
+
+        gpgclip = GPGClip(gpg, clipboard)
+        verify = gpgclip.main_loop()
     assert verify.valid
